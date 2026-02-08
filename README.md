@@ -52,15 +52,17 @@ python3 experiments/summarize_results.py
 ## Results
 
 <!-- AUTO:RESULTS:START -->
-> This section is auto-generated. Run:
+> This section is auto-generated.
+>
+> **To reproduce results + figures:**
 >
 > ```bash
-> source venv/bin/activate
-> python experiments/run_all.py
-> python scripts/generate_results_md.py
-> python scripts/make_figures.py
+> bash scripts/refresh_results.sh
 > ```
 >
-> See: `outputs/results/RESULTS.md`
+> Outputs:
+> - `outputs/results/RESULTS.md`
+> - `outputs/figures/`
 <!-- AUTO:RESULTS:END -->
+
 
