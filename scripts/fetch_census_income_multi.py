@@ -75,8 +75,15 @@ def main() -> None:
 
         df = pd.concat(parts, ignore_index=True)
         before = len(df)
+
+        df["median_income"] = pd.to_numeric(df["median_income"], errors="coerce")
+
+        # Drop NaN + invalid/sentinel + non-positive values
         df = df.dropna(subset=["median_income"]).copy()
-        print(f"  Dropped missing income: {before} -> {len(df)}")
+        df = df[df["median_income"] > 0].copy()
+        df = df[df["median_income"] != -666666666].copy()
+
+        print(f"  Dropped invalid/missing income: {before} -> {len(df)}")
 
         out_path = out_dir / f"{city}_income_{args.year}.parquet"
         df[["tract_id", "median_income"]].to_parquet(out_path, index=False)
