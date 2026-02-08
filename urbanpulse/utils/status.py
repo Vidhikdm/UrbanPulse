@@ -14,6 +14,12 @@ class DataStatus(Enum):
 
 @dataclass
 class DataChecker:
+
+    def check_tracts(self, city: str) -> DataStatus:
+        # Tract geometries written by scripts/fetch_tract_geometries.py
+        p = self._raw('census', f"{city}_tracts_2021.gpkg")
+        return DataStatus.AVAILABLE if p.exists() else DataStatus.MISSING
+
     data_root: Path = Path("data")
 
     def _raw(self, *parts: str) -> Path:
@@ -48,6 +54,7 @@ class DataChecker:
 
     def check_all(self, city: str) -> Dict[str, DataStatus]:
         return {
+            "tracts": self.check_tracts(city),
             "census": self.check_census(city),
             "osm": self.check_osm(city),
             "safety": self.check_safety(city),
