@@ -23,7 +23,7 @@ def errors_by_income_quartile(y_true, y_pred):
     )
 
     summary = (
-        df.groupby("quartile")
+        df.groupby("quartile", observed=True)
           .agg(
               mae=("abs_err", "mean"),
               rmse=("err", lambda x: float(np.sqrt(np.mean(np.square(x))))),
