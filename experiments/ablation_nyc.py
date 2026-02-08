@@ -1,4 +1,12 @@
 #!/usr/bin/env python3
+
+# --- path bootstrap (so `python experiments/*.py` can import `urbanpulse`) ---
+import sys
+from pathlib import Path
+PROJECT_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(PROJECT_ROOT))
+# --------------------------------------------------------------------------
+
 from __future__ import annotations
 
 import argparse
