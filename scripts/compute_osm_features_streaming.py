@@ -57,10 +57,6 @@ def main():
 
     # Load tracts, project for meter-accurate lengths
     tracts = gpd.read_file(tracts_path)
-
-# Area in km^2 (project to meters first)
-tracts_proj = tracts.to_crs("EPSG:3857")
-tracts["tract_area_km2"] = (tracts_proj.geometry.area / 1e6).astype(float)
     if "tract_id" not in tracts.columns:
         # fallback
         if "GEOID" in tracts.columns:
