@@ -49,3 +49,18 @@ Assuming you already have the datasets in `data/processed/`:
 python3 experiments/run_all.py
 python3 experiments/summarize_results.py
 
+## Results
+
+<!-- AUTO:RESULTS:START -->
+> This section is auto-generated. Run:
+>
+> ```bash
+> source venv/bin/activate
+> python experiments/run_all.py
+> python scripts/generate_results_md.py
+> python scripts/make_figures.py
+> ```
+>
+> See: `outputs/results/RESULTS.md`
+<!-- AUTO:RESULTS:END -->
+
