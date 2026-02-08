@@ -160,6 +160,10 @@ def folium_points_map(df: pd.DataFrame, value_col: str, target: str, title: str)
     m = folium.Map(location=[lat0, lon0], zoom_start=zoom, tiles="CartoDB positron", control_scale=True)
 
     # robust min/max for color scaling
+    # --- Robust numeric coercion (prevents pandas quantile type errors) ---
+    d[value_col] = pd.to_numeric(d[value_col], errors='coerce')
+    d[value_col] = d[value_col].replace([np.inf, -np.inf], np.nan)
+    d = d.dropna(subset=[value_col]).copy()
     vmin = float(d[value_col].quantile(0.02))
     vmax = float(d[value_col].quantile(0.98))
     if math.isclose(vmin, vmax):
