@@ -36,6 +36,7 @@ def main():
     ap.add_argument("--seed", type=int, default=42)
     ap.add_argument("--test-size", type=float, default=0.2)
     ap.add_argument("--log-target", action="store_true", help="Train on log1p(income) then invert for metrics")
+    args = aap.add_argument("--include-311", action="store_true", help="Include NYC 311 tract features (complaint_*, complaints_total_density, complaint_entropy) if present")
     args = ap.parse_args()
 
     out_dir = Path(args.output)
