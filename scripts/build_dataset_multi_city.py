@@ -2,12 +2,16 @@
 """
 Build tract-level datasets for multiple cities using:
 - TIGER tract geometries (.gpkg)
-- ACS median income (.parquet)
+- ACS targets (multi-target) OR income-only fallback (.parquet)
 - OSM-derived tract features (.parquet)
 
+Outputs a single parquet per city with:
+- city, tract_id, lat, lon, image_paths (placeholder)
+- targets: median_income + any additional ACS targets (if available)
+- geo features from OSM aggregation
+
 Usage:
-  python3 scripts/build_dataset_multi_city.py --city chicago --output data/processed/chicago_dataset.parquet
-  python3 scripts/build_dataset_multi_city.py --city san_francisco --output data/processed/san_francisco_dataset.parquet
+  python scripts/build_dataset_multi_city.py --city nyc --year 2021 --output data/processed/nyc_dataset.parquet
 """
 
 import argparse
@@ -18,7 +22,6 @@ import geopandas as gpd
 
 def load_tracts(path: Path) -> gpd.GeoDataFrame:
     gdf = gpd.read_file(path)
-    # Ensure tract_id exists
     if "tract_id" not in gdf.columns:
         if "GEOID" in gdf.columns:
             gdf["tract_id"] = gdf["GEOID"].astype(str)
@@ -37,6 +40,40 @@ def load_income(path: Path) -> pd.DataFrame:
     df["median_income"] = pd.to_numeric(df["median_income"], errors="coerce")
     df = df.dropna(subset=["median_income"])
     return df[["tract_id", "median_income"]]
+
+
+def load_targets(path: Path) -> pd.DataFrame:
+    """
+    Load multi-target ACS labels parquet.
+    Required: tract_id
+    Others: any numeric target columns (median_income, poverty_rate, unemployment_rate, etc.)
+    """
+    df = pd.read_parquet(path).copy()
+    if "tract_id" not in df.columns:
+        raise SystemExit(f"❌ targets parquet must include tract_id: {path}")
+    df["tract_id"] = df["tract_id"].astype(str)
+    for c in df.columns:
+        if c == "tract_id":
+            continue
+        df[c] = pd.to_numeric(df[c], errors="coerce")
+    # keep rows that have at least one non-null target
+    target_cols = [c for c in df.columns if c != "tract_id"]
+    if target_cols:
+        df = df.dropna(subset=target_cols, how="all")
+    return df
+
+
+def pick_targets_path(city: str, year: int) -> Path | None:
+    candidates = [
+        Path(f"data/raw/census/{city}_acs_targets_{year}.parquet"),
+        Path(f"data/raw/census/{city}_targets_{year}.parquet"),
+        Path(f"data/raw/census/{city}_acs_targets.parquet"),
+        Path(f"data/raw/census/{city}_targets.parquet"),
+    ]
+    for p in candidates:
+        if p.exists():
+            return p
+    return None
 
 
 def main() -> int:
@@ -60,34 +97,58 @@ def main() -> int:
 
     tracts = load_tracts(tracts_path)
     income = load_income(income_path)
+
     geo = pd.read_parquet(geo_path).copy()
     if "tract_id" not in geo.columns:
         raise SystemExit(f"❌ geo features missing tract_id: {geo_path}")
     geo["tract_id"] = geo["tract_id"].astype(str)
 
+    # Prefer multi-target ACS labels if present; else fall back to income-only
+    targets_path = pick_targets_path(city, year)
+    if targets_path is not None:
+        targets = load_targets(targets_path)
+        # Ensure median_income exists (some target packs might omit it)
+        if "median_income" not in targets.columns:
+            targets = targets.merge(income, on="tract_id", how="left")
+        print(f"✅ Using targets: {targets_path} (cols={len(targets.columns)-1})")
+    else:
+        targets = income.copy()
+        print("⚠️  No targets parquet found; using income-only labels.")
+
     # Merge labels into tracts
-    gdf = tracts.merge(income, on="tract_id", how="inner")
-    # Centroids for lat/lon (safe in projected CRS? we'll do in WGS84)
+    gdf = tracts.merge(targets, on="tract_id", how="inner")
+
+    # Centroids for lat/lon
     if gdf.crs is None:
-        # TIGER usually ships with EPSG:4269; but if missing, still set to WGS84-ish
         gdf = gdf.set_crs("EPSG:4326", allow_override=True)
-    # Compute centroids in a projected CRS (avoids centroid-in-geographic warning)
-    # Web Mercator is fine here for centroids; then convert centroid points back to WGS84.
+
     gdf_proj = gdf.to_crs("EPSG:3857")
     cent_proj = gdf_proj.geometry.centroid
     cent_ll = gpd.GeoSeries(cent_proj, crs="EPSG:3857").to_crs("EPSG:4326")
     gdf["lat"] = cent_ll.y
     gdf["lon"] = cent_ll.x
 
-    # Merge geo features
-    df = pd.DataFrame({
+    # Collect target cols from merged gdf
+    ignore = {"tract_id", "geometry", "lat", "lon"}
+    target_cols = [c for c in gdf.columns if c not in ignore and c in targets.columns]
+
+    if "median_income" not in target_cols:
+        raise SystemExit("❌ median_income missing after merge (targets + income fallback failed).")
+
+    base = {
         "city": city,
         "tract_id": gdf["tract_id"].astype(str),
-        "median_income": gdf["median_income"].astype(float),
         "lat": gdf["lat"].astype(float),
         "lon": gdf["lon"].astype(float),
         "image_paths": ["[]"] * len(gdf),  # placeholder for later vision phase
-    })
+    }
+    df = pd.DataFrame(base)
+
+    # Add all targets
+    for c in target_cols:
+        df[c] = gdf[c]
+
+    # Merge geo features
     df = df.merge(geo, on="tract_id", how="left").fillna(0)
 
     if args.limit and args.limit > 0:
@@ -98,8 +159,8 @@ def main() -> int:
     df.to_parquet(out_path, index=False)
 
     print(f"✅ Wrote dataset: {out_path} (rows={len(df)}, cols={len(df.columns)})")
-    print(f"   income min/max: {df['median_income'].min():.0f} / {df['median_income'].max():.0f}")
-    print(f"   unique tracts: {df['tract_id'].nunique()}")
+    print(f"   median_income min/max: {df['median_income'].min():.0f} / {df['median_income'].max():.0f}")
+    print(f"   target cols: {target_cols}")
     return 0
 
 
