@@ -86,15 +86,19 @@ def main() -> None:
             df = df.merge(geo, on="tract_id", how="left")
             df = df.fillna({"poi_count_500m": 0.0, "poi_entropy": 0.0, "road_length_m_500m": 0.0})
             print(f"✅ Merged geo features from {feat_path}")
-
-    # Optional: NYC 311 features (Phase E)
-    nyc311_path = Path("data/features") / f"{city}_311_features.parquet"
-    if nyc311_path.exists():
-        f311 = pd.read_parquet(nyc311_path)
-        df = df.merge(f311, on="tract_id", how="left")
-        print(f"✅ Merged 311 features from {nyc311_path}")
         except Exception as e:
             print(f"⚠️  Failed to merge geo features ({feat_path}): {e}")
+
+    # Optional: NYC 311 features (Phase E)
+    nyc311_path = Path('data/features') / f"{args.city}_311_features.parquet"
+    if nyc311_path.exists():
+        f311 = pd.read_parquet(nyc311_path)
+        df = df.merge(f311, on='tract_id', how='left')
+        # Fill NaNs for common 311 columns (safe even if some columns missing)
+        fill_cols = [c for c in df.columns if c.startswith('complaint_') or c in ('complaints_total_density','complaint_entropy')]
+        if fill_cols:
+            df[fill_cols] = df[fill_cols].fillna(0.0)
+        print(f"✅ Merged 311 features from {nyc311_path}")
 
     df.to_parquet(out, index=False)
 
