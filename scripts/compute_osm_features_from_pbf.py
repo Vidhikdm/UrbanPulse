@@ -134,7 +134,7 @@ def main() -> int:
         )
 
     # 3) Load tracts + features
-    tracts = gpd.read_file(tracts_path, layer="tracts")
+    tracts = gpd.read_file(tracts_path)  # auto-detect first layer
     if "tract_id" not in tracts.columns:
         raise SystemExit("tracts layer missing tract_id column (expected standardized tract_id).")
 
