@@ -1,0 +1,26 @@
+nyc:
+  name: "New York City"
+  bbox: [-74.05, 40.63, -73.75, 40.85]
+  state: "NY"
+  fips_code: "36"
+  county_fips: ["005", "047", "061", "081", "085"]
+  timezone: "America/New_York"
+  notes: "Using all 5 boroughs"
+
+chicago:
+  name: "Chicago"
+  bbox: [-87.94, 41.64, -87.52, 42.02]
+  state: "IL"
+  fips_code: "17"
+  county_fips: ["031"]
+  timezone: "America/Chicago"
+  notes: "Cook County tracts"
+
+san_francisco:
+  name: "San Francisco"
+  bbox: [-122.52, 37.70, -122.35, 37.81]
+  state: "CA"
+  fips_code: "06"
+  county_fips: ["075"]
+  timezone: "America/Los_Angeles"
+  notes: "SF county tracts"
