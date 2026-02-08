@@ -82,10 +82,10 @@ def main() -> int:
     # Merge geo features
     df = pd.DataFrame({
         "city": city,
-        "tract_id": gdf_ll["tract_id"].astype(str),
-        "median_income": gdf_ll["median_income"].astype(float),
-        "lat": gdf_ll["lat"].astype(float),
-        "lon": gdf_ll["lon"].astype(float),
+        "tract_id": gdf["tract_id"].astype(str),
+        "median_income": gdf["median_income"].astype(float),
+        "lat": gdf["lat"].astype(float),
+        "lon": gdf["lon"].astype(float),
         "image_paths": ["[]"] * len(gdf_ll),  # placeholder for later vision phase
     })
     df = df.merge(geo, on="tract_id", how="left").fillna(0)
