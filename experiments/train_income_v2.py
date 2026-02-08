@@ -42,20 +42,32 @@ def main():
     (out_dir / "results").mkdir(parents=True, exist_ok=True)
 
     df = pd.read_parquet(args.data)
+
+    # Optional: include NYC 311 tract features if present
+    extra_311_cols = []
+    if getattr(args, "include_311", False):
+        for c in df.columns:
+            if c == "complaints_total_density" or c == "complaint_entropy" or c.startswith("complaint_"):
+                extra_311_cols.append(c)
+        # Keep only numeric 311 cols (defensive)
+        extra_311_cols = [c for c in extra_311_cols if c != "tract_id"]
+        if extra_311_cols:
+            print(f"✅ Using {len(extra_311_cols)} NYC 311 feature columns")
+        else:
+            print("ℹ️  --include-311 set, but no 311 feature columns found in dataset")
     missing = [c for c in GEO_COLS + ["median_income"] if c not in df.columns]
     if missing:
         raise ValueError(f"Dataset missing columns: {missing}")
 
     # Clean & stabilize: clip extreme densities and add log features (helps tree + linear)
-    X = df[GEO_COLS].copy().astype(float)
-    for c in GEO_COLS:
-        X[c] = X[c].clip(lower=0.0)
+    # Build feature list (geo + optional 311)
+    base_features = [c for c in df.columns if c in ("road_density","poi_density","landuse_entropy")]
+    features = base_features + extra_311_cols
+    missing = [c for c in features if c not in df.columns]
+    if missing:
+        raise ValueError(f"Dataset missing feature columns: {missing}")
 
-    # Add engineered features (still geo-only, no new data)
-    X["log_road_density"] = np.log1p(X["road_density"])
-    X["log_poi_density"] = np.log1p(X["poi_density"])
-    X["interaction_rd_poi"] = X["road_density"] * X["poi_density"]
-
+    X = df[features].values
     y = df["median_income"].astype(float).values
 
     X_train, X_test, y_train, y_test = train_test_split(
