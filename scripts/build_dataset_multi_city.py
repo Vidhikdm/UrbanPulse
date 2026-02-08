@@ -71,10 +71,13 @@ def main() -> int:
     if gdf.crs is None:
         # TIGER usually ships with EPSG:4269; but if missing, still set to WGS84-ish
         gdf = gdf.set_crs("EPSG:4326", allow_override=True)
-    gdf_ll = gdf.to_crs("EPSG:4326")
-    cent = gdf_ll.geometry.centroid
-    gdf_ll["lat"] = cent.y
-    gdf_ll["lon"] = cent.x
+    # Compute centroids in a projected CRS (avoids centroid-in-geographic warning)
+    # Web Mercator is fine here for centroids; then convert centroid points back to WGS84.
+    gdf_proj = gdf.to_crs("EPSG:3857")
+    cent_proj = gdf_proj.geometry.centroid
+    cent_ll = gpd.GeoSeries(cent_proj, crs="EPSG:3857").to_crs("EPSG:4326")
+    gdf["lat"] = cent_ll.y
+    gdf["lon"] = cent_ll.x
 
     # Merge geo features
     df = pd.DataFrame({
