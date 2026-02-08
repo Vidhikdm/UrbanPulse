@@ -78,8 +78,8 @@ def main() -> int:
 
     roads_pbf = workdir / "roads.osm.pbf"
     pois_pbf = workdir / "pois.osm.pbf"
-    roads_geojson = workdir / "roads.geojson"
-    pois_geojson = workdir / "pois.geojson"
+    roads_geojson = workdir / ("roads.geojsonseq" if (workdir / "roads.geojsonseq").exists() else "roads.geojson")
+    pois_geojson = workdir / ("pois.geojsonseq" if (workdir / "pois.geojsonseq").exists() else "pois.geojson")
 
     if out_path.exists() and not args.force:
         print(f"✅ Output already exists: {out_path} (use --force to recompute)")
