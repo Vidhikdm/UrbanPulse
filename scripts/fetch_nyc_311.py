@@ -2,6 +2,7 @@
 import argparse
 import math
 from pathlib import Path
+from datetime import datetime, timedelta
 import requests
 import pandas as pd
 
@@ -33,8 +34,11 @@ def main() -> int:
         return 0
 
     # Only rows with coordinates + last N months
+    # Socrata prefers concrete timestamps over SQL date functions
+    start = (datetime.utcnow() - timedelta(days=30 * args.months)).replace(hour=0, minute=0, second=0, microsecond=0)
+    start_iso = start.strftime("%Y-%m-%dT%H:%M:%S.000")
     where = (
-        f"created_date >= date_trunc_ym(now() - interval '{args.months} months') "
+        f"created_date >= '{start_iso}' "
         "AND latitude IS NOT NULL AND longitude IS NOT NULL "
         "AND latitude != '0' AND longitude != '0'"
     )
