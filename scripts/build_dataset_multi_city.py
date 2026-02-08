@@ -86,7 +86,7 @@ def main() -> int:
         "median_income": gdf["median_income"].astype(float),
         "lat": gdf["lat"].astype(float),
         "lon": gdf["lon"].astype(float),
-        "image_paths": ["[]"] * len(gdf_ll),  # placeholder for later vision phase
+        "image_paths": ["[]"] * len(gdf),  # placeholder for later vision phase
     })
     df = df.merge(geo, on="tract_id", how="left").fillna(0)
 
