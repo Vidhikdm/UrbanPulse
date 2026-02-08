@@ -42,6 +42,8 @@ except Exception:
     XGBRegressor = None  # type: ignore
 
 from sklearn.ensemble import HistGradientBoostingRegressor
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
 
 
 CITY_CHOICES = ["nyc", "chicago", "san_francisco"]
@@ -165,7 +167,7 @@ def train_predict(
     seed: int,
 ) -> np.ndarray:
     if model_name == "ridge":
-        model = Ridge(alpha=1.0, random_state=seed)
+        model = Pipeline([("scaler", StandardScaler()), ("ridge", Ridge(alpha=1.0, random_state=seed))])
         model.fit(X_train, y_train)
         return model.predict(X_test)
 
