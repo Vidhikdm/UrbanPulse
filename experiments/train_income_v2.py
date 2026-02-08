@@ -43,6 +43,20 @@ def main():
 
     df = pd.read_parquet(args.data)
 
+    # Optional: include NYC 311 features
+    include_311_cols = []
+    if getattr(args, "include_311", False):
+        include_311_cols = [c for c in df.columns if c.startswith("complaint_")]
+        for c in ("complaints_total_density", "complaint_entropy"):
+            if c in df.columns:
+                include_311_cols.append(c)
+        # Fill missing 311 features with 0
+        if include_311_cols:
+            df[include_311_cols] = df[include_311_cols].fillna(0.0)
+            print(f"✅ Using {len(include_311_cols)} NYC 311 feature columns")
+        else:
+            print("⚠️  --include-311 set, but no 311 columns found in dataset")
+
     # Optional: include NYC 311 tract features if present
     extra_311_cols = []
     if getattr(args, "include_311", False):
@@ -62,6 +76,7 @@ def main():
     # Clean & stabilize: clip extreme densities and add log features (helps tree + linear)
     # Build feature list (geo + optional 311)
     base_features = [c for c in df.columns if c in ("road_density","poi_density","landuse_entropy")]
+    features = features + include_311_cols
     features = base_features + extra_311_cols
     missing = [c for c in features if c not in df.columns]
     if missing:
