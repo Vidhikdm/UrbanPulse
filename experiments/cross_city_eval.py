@@ -251,8 +251,8 @@ def run_one(
     if log_target:
         # Safety: clip log-predictions to training log-income range
         # to prevent expm1() from exploding on cross-city domain shift.
-        y_lo = float(np.min(y_train))
-        y_hi = float(np.max(y_train))
+        y_lo = float(np.min(y_tr_fit))
+        y_hi = float(np.max(y_tr_fit))
         y_pred = np.clip(y_pred, y_lo, y_hi)
         y_pred = np.expm1(y_pred_fit)
     else:
