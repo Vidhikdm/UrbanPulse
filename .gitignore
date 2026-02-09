@@ -28,3 +28,6 @@ htmlcov/
 
 # Local caches (never commit)
 cache/
+
+# Streamlit secrets
+.streamlit/secrets.toml
