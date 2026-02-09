@@ -31,3 +31,7 @@ cache/
 
 # Streamlit secrets
 .streamlit/secrets.toml
+
+# Streamlit
+.streamlit/*
+!.streamlit/config.toml
