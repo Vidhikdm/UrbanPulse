@@ -59,7 +59,7 @@ UrbanPulse demonstrates that **freely available urban data can serve as meaningf
 - ⚖️ **Fairness Analysis** — Where do models systematically fail?
 - 📊 **Honest Evaluation** — Reporting both successes and limitations
 
-**We don't claim to replace official statistics** — we explore complementary data-driven insights for urban research and planning.
+ we explore complementary data-driven insights for urban research and planning.
 
 ---
 
@@ -204,7 +204,7 @@ UrbanPulse models **six socioeconomic indicators** at tract level:
 - `osm_only` — OSM features + coordinates (~24 features)
 - `osm_311` — OSM + 311 signals + coordinates (~32 features, NYC only)
 
-> **Deliberate Design Choice:** Lat/lon included to expose spatial autocorrelation, not hide it. This makes evaluation honest.
+> **Deliberate Design Choice:** Lat/lon included to expose spatial autocorrelation. 
 
 ---
 
@@ -414,8 +414,7 @@ urbanpulse/
 - Same split across all models for fair comparison
 
 **Why Stratification Matters:**
-Without stratification, test sets can have skewed distributions → unreliable metrics. This was a hard-learned lesson after observing severe variance in early experiments.
-
+Without stratification, test sets can have skewed distributions → unreliable metrics. 
 ### Pipeline Stabilization Techniques
 
 1. **Log-Transform for Monetary Targets**
@@ -526,7 +525,7 @@ UrbanPulse is released under the **MIT License** (see [LICENSE](LICENSE)).
 - NYC Open Data initiative
 
 **Inspiration:**
-- CityLens (Tsinghua FIB Lab) — concept inspiration only, no code copied
+- CityLens (Tsinghua FIB Lab) — concept inspiration only
 - MIT Senseable City Lab — urban computing research
 - Esri Urban Observatory — spatial analysis methods
 
