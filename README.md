@@ -63,19 +63,15 @@ UrbanPulse demonstrates that **freely available urban data can serve as meaningf
 
 ---
 
-## 🎥 Interactive Dashboard Walkthrough
+## 🎥 Dashboard Walkthroughs
 
-> Click the preview below to watch the full interactive dashboard walkthrough.
-
-[![UrbanPulse Dashboard Overview](docs/media/images/UrbanPulse_Model_Leaderboard.jpeg)](docs/media/videos/UrbanPulse_Interactive_Dashboard_Overview.mp4)
+### Interactive Dashboard Overview
+<video src="https://github.com/user-attachments/assets/6bb5ad1a-ae65-4b57-a667-2da7b41d4969" controls></video>
 
 ---
 
-## 🔍 Model Diagnostics & Error Analysis
-
-> Walkthrough of diagnostics including predicted vs actual, error by quartile, and worst-case failures.
-
-[![UrbanPulse Model Diagnostics](docs/media/images/UrbanPulse_CrossCity_Model_Comparison.jpeg)](docs/media/videos/UrbanPulse_Model_Diagnostics.mp4)
+### Model Diagnostics & Error Analysis
+<video src="https://github.com/user-attachments/assets/2b51a553-cf36-4611-aab7-bfd127d23fed" controls></video>
 
 ---
 
