@@ -10,9 +10,9 @@
 > *A research-grade framework for predicting neighborhood-level socioeconomic indicators using urban morphology, civic signals, and classical machine learning — with an interactive dashboard for spatial exploration and analysis.*
 
 <p align="center">
-  <a href="#-key-results">Results</a> •
+  • <a href="#-key-results">Results</a> •
   <a href="#-quick-start">Quick Start</a> •
-  <a href="#-methodology">Methodology</a> •
+  <a href="#-methodology">Methodology</a> 
 </p>
 
 ---
