@@ -12,9 +12,7 @@
 <p align="center">
   <a href="#-key-results">Results</a> •
   <a href="#-quick-start">Quick Start</a> •
-  <a href="#-interactive-dashboard">Dashboard</a> •
   <a href="#-methodology">Methodology</a> •
-  <a href="#-cities--targets">Data</a>
 </p>
 
 ---
