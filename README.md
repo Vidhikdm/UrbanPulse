@@ -128,7 +128,7 @@ UrbanPulse demonstrates that **freely available urban data can serve as meaningf
 3. ✅ **Poverty shows moderate signal** (R² 0.41-0.52)
 4. ⚠️ **Housing markets are volatile** (R² varies widely, speculative dynamics)
 5. ✅ **Tree-based models dominate** (XGBoost, Extra Trees outperform linear models)
-6. ✅ **Spatial coordinates provide strong baseline** (geography matters!)
+6. ✅ **Spatial coordinates provide strong baseline** 
 
 > **Note:** Results are from stabilized, production-grade models with stratified train/test splits and careful target handling. All outputs are cached and reproducible.
 
