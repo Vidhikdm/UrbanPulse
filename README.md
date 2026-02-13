@@ -221,7 +221,7 @@ UrbanPulse includes a **Streamlit-based analytical dashboard** for:
 - 🎨 **Scatter Plots** — Predicted vs actual values
 - 📋 **Leaderboards** — Best performing model-target combinations
 - ⚖️ **Fairness Diagnostics** — Error analysis by income quartile
-- 💬 **Plain-Language Explanations** — Human-readable insights (no LLM required)
+- 💬 **Easy Explanations** — Human-readable insights 
 
 ### Design Philosophy
 
