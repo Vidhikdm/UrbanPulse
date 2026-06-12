@@ -28,11 +28,9 @@ Unlike typical academic demos, UrbanPulse provides:
 - ✅ **Multi-City Benchmarking** — NYC, Chicago, San Francisco (3,798 census tracts)
 - ✅ **Six Socioeconomic Targets** — Income, education, poverty, housing, employment
 - ✅ **Multiple Feature Sets** — OpenStreetMap, 311 complaints, spatial coordinates
-- ✅ **Classical ML Models** — XGBoost, Extra Trees, Ridge (interpretable by design)
+- ✅ **ML Models** — XGBoost, Extra Trees, Ridge (interpretable by design)
 - ✅ **Interactive Dashboard** — Streamlit app for exploration and spatial diagnostics
 - ✅ **Production-Ready Pipeline** — Reproducible, versioned, fully documented
-
-**This is not a toy demo.** It's a serious research artifact designed for urban AI portfolios, academic benchmarking, and methodological exploration.
 
 ---
 
